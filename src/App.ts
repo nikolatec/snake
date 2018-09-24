@@ -21,8 +21,8 @@ let game = Game.createGame({
 new Apple({
   id: 'apple',
   color: 'red',
-  x: 15,
-  y: 15,
+  x: config.SCENE_PIXEL_TIMES_WIDTH - 5,
+  y: config.SCENE_PIXEL_TIMES_HEIGHT - 5,
 });
 
 function handleKeyboard(event: any) {

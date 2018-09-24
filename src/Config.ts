@@ -1,6 +1,13 @@
+const W = innerWidth;
+const H = innerHeight;
+const PIXEL = 40;
+const SCENE_PIXEL_TIMES_WIDTH = Math.floor(W / PIXEL);
+const SCENE_PIXEL_TIMES_HEIGHT = Math.floor(H / PIXEL);
+
 export default {
-  SCENE_WIDTH: 400,
-  SCENE_HEIGHT: 400,
-  SCENE_GRID_SIZE: 20,
-  SCENE_TILE_COUNT: 20,
+  PIXEL: PIXEL,
+  SCENE_PIXEL_TIMES_WIDTH,
+  SCENE_PIXEL_TIMES_HEIGHT,
+  SCENE_WIDTH:  W,
+  SCENE_HEIGHT: H,
 };

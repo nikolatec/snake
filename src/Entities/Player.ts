@@ -17,15 +17,15 @@ export default class Player extends Entity {
     this.x += this.xVelocity;
     this.y += this.yVelocity;
     if (this.x < 0) {
-      this.x = config.SCENE_TILE_COUNT - 1;
+      this.x = config.SCENE_PIXEL_TIMES_WIDTH - 1;
     }
-    if (this.x > config.SCENE_TILE_COUNT - 1) {
+    if (this.x > config.SCENE_PIXEL_TIMES_WIDTH - 1) {
       this.x = 0;
     }
     if (this.y < 0) {
-      this.y = config.SCENE_TILE_COUNT - 1;
+      this.y = config.SCENE_PIXEL_TIMES_HEIGHT - 1;
     }
-    if (this.y > config.SCENE_TILE_COUNT - 1) {
+    if (this.y > config.SCENE_PIXEL_TIMES_HEIGHT) {
       this.y = 0;
     }
   }
@@ -37,12 +37,12 @@ export default class Player extends Entity {
     scene.context.shadowColor = this.color;
     for (var i = 0; i < this.trail.length; i++) {
       scene.context.fillStyle = this.color;
-      scene.context.fillRect(this.trail[i].x * config.SCENE_GRID_SIZE, this.trail[i].y * config.SCENE_GRID_SIZE, config.SCENE_GRID_SIZE - 2, config.SCENE_GRID_SIZE - 2);
+      scene.context.fillRect(this.trail[i].x * config.PIXEL, this.trail[i].y * config.PIXEL, config.PIXEL - 2, config.PIXEL - 2);
 
       if (this.trail[i].x === apple.x && this.trail[i].y === apple.y) {
         this.tail++;
-        apple.x = Math.floor(Math.random() * config.SCENE_GRID_SIZE);
-        apple.y = Math.floor(Math.random() * config.SCENE_GRID_SIZE);
+        apple.x = Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_WIDTH);
+        apple.y = Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_HEIGHT);
       }
 
       if (this.trail[i].x === this.x && this.trail[i].y === this.y) {

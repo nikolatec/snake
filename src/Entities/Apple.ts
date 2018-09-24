@@ -13,7 +13,7 @@ export default class Apple extends Entity {
     scene.context.shadowBlur = 20;
     scene.context.shadowColor = this.color;
     scene.context.fillStyle = this.color;
-    scene.context.fillRect(this.x * config.SCENE_GRID_SIZE, this.y * config.SCENE_GRID_SIZE, config.SCENE_GRID_SIZE - 2, config.SCENE_GRID_SIZE - 2);
+    scene.context.fillRect(this.x * config.PIXEL, this.y * config.PIXEL, config.PIXEL - 2, config.PIXEL - 2);
   }
 
   public update() {}
