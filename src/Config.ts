@@ -1,0 +1,6 @@
+export default {
+  SCENE_WIDTH: 400,
+  SCENE_HEIGHT: 400,
+  SCENE_GRID_SIZE: 20,
+  SCENE_TILE_COUNT: 20,
+};
