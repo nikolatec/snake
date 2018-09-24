@@ -4,10 +4,11 @@ class Game {
   fps: number;
   showFps: false;
   previousFrameTime: number;
+  lastFrameLimit: number;
   scene: any;
   entities: any[];
 
-  constructor({width = 400, height = 400, entities = [], fps = 15, showFps = false} : any) {
+  constructor({width = 400, height = 400, entities = [], fps = 60, showFps = false} : any) {
     this.run = this.run.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
     this.update = this.update.bind(this);
@@ -19,7 +20,7 @@ class Game {
     this.entities = entities;
   }
 
-  createGame({width = 400, height = 400, fps = 15, showFps = false} : any) {
+  createGame({width = 400, height = 400, fps = 60, showFps = false} : any) {
     this.fps = fps;
     this.showFps = showFps;
     this.scene = new Scene({width, height});
@@ -30,9 +31,16 @@ class Game {
     requestAnimationFrame(this.gameLoop);
   }
 
-  private gameLoop(time: number) {
+  private gameLoop(timestamp: number) {
+    // Throttle the frame rate.    
+    if (timestamp <= this.lastFrameLimit + (1000 / this.fps)) {
+      requestAnimationFrame(this.gameLoop);
+      return;
+    }
+    this.lastFrameLimit = timestamp;
+
     this.update();
-    this.draw(time);
+    this.draw(timestamp);
     requestAnimationFrame(this.gameLoop);
   }
 
@@ -42,17 +50,17 @@ class Game {
     }
   }
 
-  private draw(time: number) {
+  private draw(timestamp: number) {
     this.scene.clear();
-    this.drawFps(time);
+    this.drawFps(timestamp);
     for (let entity of this.entities) {
       entity.draw(this.scene);
     }
-    this.previousFrameTime = time;
+    this.previousFrameTime = timestamp;
   }
 
-  private drawFps(time: number) {
-    const fps = Math.floor(1000 / (time - this.previousFrameTime));
+  private drawFps(timestamp: number) {
+    const fps = Math.floor(1000 / (timestamp - this.previousFrameTime));
     this.scene.context.fillStyle = 'white';
     this.scene.context.fillText(fps, this.scene.canvas.width - 17, 10);
   }
