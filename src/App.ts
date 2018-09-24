@@ -12,7 +12,7 @@ let player = new Player({
 });
 
 let game = Game.createGame({
-  fps: 60,
+  fps: 30,
   showFps: true,
   width: config.SCENE_WIDTH,
   height: config.SCENE_HEIGHT,

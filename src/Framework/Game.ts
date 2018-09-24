@@ -1,23 +1,21 @@
 import Scene from './Scene';
+import Entity from './Entity';
 
 class Game {
-  fps: number;
-  showFps: false;
+  fps: number = 60;
+  showFps: boolean = false;
   previousFrameTime: number;
   lastFrameLimit: number;
   scene: any;
-  entities: any[];
+  entities: Entity[] = [];
 
-  constructor({width = 400, height = 400, entities = [], fps = 60, showFps = false} : any) {
+  constructor({width = 400, height = 400} : any) {
     this.run = this.run.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
     this.update = this.update.bind(this);
     this.draw = this.draw.bind(this);
 
-    this.fps = fps;
-    this.showFps = showFps;
     this.scene = new Scene({width, height});
-    this.entities = entities;
   }
 
   createGame({width = 400, height = 400, fps = 60, showFps = false} : any) {
@@ -33,7 +31,7 @@ class Game {
 
   private gameLoop(timestamp: number) {
     // Throttle the frame rate.    
-    if (timestamp <= this.lastFrameLimit + (1000 / this.fps)) {
+    if (timestamp < this.lastFrameLimit + (1000 / this.fps)) {
       requestAnimationFrame(this.gameLoop);
       return;
     }
