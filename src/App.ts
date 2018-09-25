@@ -6,8 +6,8 @@ import config from './Config';
 import generateApples from './generateApples';
 import generateSnakes from './generateSnakes';
 
-generateApples(1000);
-generateSnakes(10);
+generateApples(500);
+generateSnakes(50);
 
 let game = Game.createGame({
   fps: 30,
