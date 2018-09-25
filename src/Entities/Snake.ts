@@ -1,0 +1,93 @@
+import IEntity from '../Framework/Interfaces/IEntity';
+import IPosition from '../Framework/Interfaces/IPosition';
+import Entity from '../Framework/Entity';
+import Scene from '../Framework/Scene';
+import config from '../Config';
+import Events from '../Framework/Events';
+
+export default class Snake extends Entity {
+
+  tail = 5;
+  tailMin = 5;
+  trail: IPosition[] = [];
+
+  constructor({id, color, x, y} : IEntity) {
+
+    super({id, color, x, y});
+    this.addLengthOnAppleCollision();
+  }
+
+  public update() {
+
+    this.cutTailOnSelfCollision();
+    this.controlTailLength();
+    this.teleportOnWallCollision();
+    this.movePlayer();
+  }
+
+  public draw(scene: Scene) {
+
+    this.makeItGlow(scene);
+    this.drawSnake(scene);
+  }
+
+  private makeItGlow(scene: Scene) {
+
+    scene.context.shadowBlur = 20;
+    scene.context.shadowColor = this.color;
+  }
+
+  private drawSnake(scene: Scene) {
+
+    for (var i = 0; i < this.trail.length; i++) {
+      scene.context.fillStyle = this.color;
+      scene.context.fillRect(this.trail[i].x * config.PIXEL, this.trail[i].y * config.PIXEL, config.PIXEL - 2, config.PIXEL - 2);
+    }
+  }
+
+  private movePlayer() {
+
+    this.x += this.xVelocity;
+    this.y += this.yVelocity;
+  }
+
+  private cutTailOnSelfCollision() {
+
+    for (var i = 0; i < this.trail.length; i++) {
+      if (this.trail[i].x === this.x && this.trail[i].y === this.y) {
+        this.tail = this.tailMin;
+      }
+    }
+  }
+
+  private controlTailLength() {
+
+    this.trail.push({x: this.x, y: this.y});
+    while (this.trail.length > this.tail) {
+      this.trail.shift();
+    }
+  }
+
+  private addLengthOnAppleCollision() {
+
+    Events.on('collision', () => {
+      this.tail++;
+    });
+  }
+
+  private teleportOnWallCollision() {
+
+    if (this.x < 0) {
+      this.x = config.SCENE_PIXEL_TIMES_WIDTH - 1;
+    }
+    if (this.x > config.SCENE_PIXEL_TIMES_WIDTH - 1) {
+      this.x = 0;
+    }
+    if (this.y < 0) {
+      this.y = config.SCENE_PIXEL_TIMES_HEIGHT - 1;
+    }
+    if (this.y > config.SCENE_PIXEL_TIMES_HEIGHT) {
+      this.y = 0;
+    }
+  }
+}

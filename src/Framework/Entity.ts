@@ -3,6 +3,7 @@ import IEntity from './Interfaces/IEntity';
 import Scene from './Scene';
 
 export default abstract class Entity implements IEntity {
+
   private game = Game;
   id = '';
   color = 'white';
@@ -14,6 +15,7 @@ export default abstract class Entity implements IEntity {
   yVelocity = 0;
   
   constructor({id = '', color = 'white', x = 0, y = 0, width = 0, height = 0, xVelocity = 0, yVelocity = 0}) {
+
     this.id = id;
     this.color = color;
     this.x = x;
@@ -22,13 +24,24 @@ export default abstract class Entity implements IEntity {
     this.height = height;
     this.xVelocity = xVelocity;
     this.yVelocity = yVelocity;
-    Game.entities.push(this);
+    
+
+    if (!Game.entites[id]) {
+      Game.entites[id] = [];
+    }
+
+    if (!id) {
+      id = 'generate uid';
+    }
+
+    Game.entites[id].push(this);
   }
 
   abstract draw(scene: Scene): void;
   abstract update(scene: Scene): void;
 
-  getEntityById(id: string) {
-    return this.game.entities.filter(e => e.id === id)[0];
+  getEntitiesById(id: string) {
+    
+    return Game.entites[id];
   }
 }
