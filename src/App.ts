@@ -1,7 +1,7 @@
 import Snake from './Entities/Snake';
 import Apple from './Entities/Apple';
-import Game from './Framework/Game';
-import Key from './Framework/Key';
+import Game from '../../gamekit/src/Core/Game';
+import Key from '../../gamekit/src/Core/Key';
 import config from './Config';
 
 let snake = new Snake({

@@ -1,9 +1,9 @@
-import IEntity from '../Framework/Interfaces/IEntity';
-import IPosition from '../Framework/Interfaces/IPosition';
-import Entity from '../Framework/Entity';
-import Scene from '../Framework/Scene';
+import IEntity from '../../../gamekit/src/Core/Interfaces/IEntity';
+import IPosition from '../../../gamekit/src/Core/Interfaces/IPosition';
+import Entity from '../../../gamekit/src/Core/Entity';
+import Scene from '../../../gamekit/src/Core/Scene';
 import config from '../Config';
-import Events from '../Framework/Events';
+import Events from '../../../gamekit/src/Core/Events';
 
 export default class Snake extends Entity {
 

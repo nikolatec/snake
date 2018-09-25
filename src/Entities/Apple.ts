@@ -1,9 +1,9 @@
-import Entity from '../Framework/Entity';
-import Scene from '../Framework/Scene';
-import IEntity from '../Framework/Interfaces/IEntity';
+import Scene from '../../../gamekit/src/Core/Scene';
+import Entity from '../../../gamekit/src/Core/Entity';
+import IEntity from '../../../gamekit/src/Core/Interfaces/IEntity';
 import config from '../Config';
 import Snake from './Snake';
-import Events from '../Framework/Events';
+import Events from '../../../gamekit/src/Core/Events';
 
 export default class Apple extends Entity {
 
