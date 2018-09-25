@@ -3,7 +3,7 @@ import IPosition from '../../../gamekit/src/Core/Interfaces/IPosition';
 import Entity from '../../../gamekit/src/Core/Entity';
 import Scene from '../../../gamekit/src/Core/Scene';
 import config from '../Config';
-import Events from '../../../gamekit/src/Core/Events';
+// import Events from '../../../gamekit/src/Core/Events';
 import Apple from './Apple';
 
 export default class Snake extends Entity {
@@ -18,11 +18,11 @@ export default class Snake extends Entity {
 
     super({id, color, x, y});
     this.ai = ai;
-    this.addLengthOnAppleCollision();
   }
 
   public update() {
 
+    this.addLengthOnAppleCollision();
     this.cutTailOnSelfCollision();
     this.controlTailLength();
     this.teleportOnWallCollision();
@@ -33,6 +33,7 @@ export default class Snake extends Entity {
   }
 
   private playAi() {
+
     this.xVelocity = 0;
     this.yVelocity = 0;
 
@@ -135,10 +136,19 @@ export default class Snake extends Entity {
 
   private addLengthOnAppleCollision() {
 
-    Events.on('collision', () => {
-      this.target = null;
-      this.tailLength++;
-    });
+    const apples: Apple[] = this.getEntitiesById('apple');
+    for (let apple of apples) {
+      if (this.trail.length) {
+        if (this.trail[0].x === apple.x && this.trail[0].y === apple.y) {
+          apple.setNewRandomPosition();
+          this.tailLength++;
+        }
+      }
+    }
+    // Events.on('collision', () => {
+    //   this.target = null;
+    //   this.tailLength++;
+    // });
   }
 
   private teleportOnWallCollision() {
