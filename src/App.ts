@@ -26,6 +26,7 @@ new Apple({
 });
 
 function generateApples(num: number) {
+  
   for (let i = 0; i < num; i++) {
     new Apple({
       id: 'apple',
