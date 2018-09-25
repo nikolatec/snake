@@ -14,12 +14,14 @@ export default class Apple extends Entity {
 
   public update() {
 
-    const snake: Snake = this.getEntitiesById('snake')[0];
-    const trail = snake.getTrail();
-    for (var i = 0; i < trail.length; i++) {
-      if (trail[i].x === this.x && trail[i].y === this.y) {
-        Events.trigger('collision');
-        this.setNewRandomPosition();
+    const snakes: any = this.getEntitiesById('snake');
+    for (let snake of snakes) {
+      for (var i = 0; i < snake.trail.length; i++) {
+        if (snake.trail[i].x === this.x && snake.trail[i].y === this.y) {
+          Events.trigger('collision');
+          // console.log('collision');
+          this.setNewRandomPosition();
+        }
       }
     }
   }

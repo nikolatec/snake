@@ -1,6 +1,6 @@
 const W = innerWidth;
 const H = innerHeight;
-const PIXEL = 20;
+const PIXEL = 10;
 const SCENE_PIXEL_TIMES_WIDTH = Math.floor(W / PIXEL);
 const SCENE_PIXEL_TIMES_HEIGHT = Math.floor(H / PIXEL);
 
