@@ -42,18 +42,22 @@ generateApples(10);
 function handleKeyboard(event: any) {
 
   switch (event.keyCode) {
+
     case Key.LEFT:
       snake.xVelocity = -1;
       snake.yVelocity = 0;
       break;
+
     case Key.UP:
       snake.xVelocity = 0;
       snake.yVelocity = -1;
       break;
+
     case Key.RIGHT:
       snake.xVelocity = 1;
       snake.yVelocity = 0;
       break;
+
     case Key.DOWN:
       snake.xVelocity = 0;
       snake.yVelocity = 1;
