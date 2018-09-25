@@ -90,7 +90,7 @@ export default class Snake extends Entity {
     if (this.y < 0) {
       this.y = config.SCENE_PIXEL_TIMES_HEIGHT - 1;
     }
-    if (this.y > config.SCENE_PIXEL_TIMES_HEIGHT) {
+    if (this.y > config.SCENE_PIXEL_TIMES_HEIGHT - 1) {
       this.y = 0;
     }
   }
