@@ -1,1 +1,1 @@
-# snake-game-ts
+# Snake Game
