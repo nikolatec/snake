@@ -15,8 +15,9 @@ export default class Apple extends Entity {
   public update() {
 
     const snake: Snake = this.getEntitiesById('snake')[0];
-    for (var i = 0; i < snake.trail.length; i++) {
-      if (snake.trail[i].x === this.x && snake.trail[i].y === this.y) {
+    const trail = snake.getTrail();
+    for (var i = 0; i < trail.length; i++) {
+      if (trail[i].x === this.x && trail[i].y === this.y) {
         Events.trigger('collision');
         this.setNewRandomPosition();
       }

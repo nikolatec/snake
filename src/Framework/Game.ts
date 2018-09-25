@@ -2,11 +2,11 @@ import Scene from './Scene';
 
 class Game {
 
-  fps: number = 60;
-  showFps: boolean = false;
-  previousDrawTime: number;
-  scene: any;
-  entites: any = {};
+  private fps: number = 60;
+  private showFps: boolean = false;
+  private previousDrawTime: number;
+  private scene: any;
+  private entites: any = {};
 
   constructor({width = 400, height = 400} : any) {
 
@@ -17,7 +17,11 @@ class Game {
     this.scene = new Scene({width, height});
   }
 
-  createGame({width = 400, height = 400, fps = 60, showFps = false} : any) {
+  public getEntites() {
+    return this.entites;
+  }
+
+  public createGame({width = 400, height = 400, fps = 60, showFps = false} : any) {
 
     this.fps = fps;
     this.showFps = showFps;

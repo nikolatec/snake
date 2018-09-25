@@ -2,7 +2,7 @@ import ITransform from './Interfaces/ITransform';
 
 export default class Scene {
 
-  canvas: any;
+  private canvas: any;
   context: CanvasRenderingContext2D;
 
   constructor(props?: ITransform) {
@@ -14,7 +14,7 @@ export default class Scene {
     this.canvas.height = height;
   }
 
-  clear() {
+  public clear() {
     
     this.context.fillStyle = 'black';
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);

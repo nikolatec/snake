@@ -2,13 +2,13 @@ class Events{
 
   private events: any = {};
 
-  on(eventName: string, fn: Function) {
+  public on(eventName: string, fn: Function) {
 
     this.events[eventName] = this.events[eventName] || [];
     this.events[eventName].push(fn);
   }
 
-  off(eventName: string, fn: Function) {
+  public off(eventName: string, fn: Function) {
 
     if (this.events[eventName]) {
       for (let i = 0; i < this.events[eventName].length; i++) {
@@ -20,7 +20,7 @@ class Events{
     }
   }
 
-  trigger(eventName: string, data?: any) {
+  public trigger(eventName: string, data?: any) {
 
     if (this.events[eventName]) {
       this.events[eventName].forEach(function(fn: Function) {

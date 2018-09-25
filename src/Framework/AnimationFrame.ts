@@ -1,14 +1,14 @@
 export default class AnimationFrame {
 
-  requestID: any;
-  fps = 60;
+  private requestID: any;
+  private fps = 60;
 
   constructor(fps = 60) {
 
     this.fps = fps;
   }
 
-  start(animate: Function) {
+  public start(animate: Function) {
     
     let then = performance.now();
     const interval = 1000 / this.fps;
@@ -25,7 +25,7 @@ export default class AnimationFrame {
     this.requestID = requestAnimationFrame(animateLoop);
   }
 
-  stop() {
+  public stop() {
 
     cancelAnimationFrame(this.requestID);
   }

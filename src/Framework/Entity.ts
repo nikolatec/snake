@@ -12,6 +12,7 @@ export default abstract class Entity implements IEntity {
   height = 0;
   xVelocity = 0;
   yVelocity = 0;
+  entites = Game.getEntites();
   
   constructor({id = '', color = 'white', x = 0, y = 0, width = 0, height = 0, xVelocity = 0, yVelocity = 0}) {
 
@@ -23,24 +24,23 @@ export default abstract class Entity implements IEntity {
     this.height = height;
     this.xVelocity = xVelocity;
     this.yVelocity = yVelocity;
-    
 
-    if (!Game.entites[id]) {
-      Game.entites[id] = [];
+    if (!this.entites[id]) {
+      this.entites[id] = [];
     }
 
     if (!id) {
       id = 'generate uid';
     }
 
-    Game.entites[id].push(this);
+    this.entites[id].push(this);
   }
 
   abstract draw(scene: Scene): void;
   abstract update(scene: Scene): void;
 
-  getEntitiesById(id: string) {
+  public getEntitiesById(id: string) {
     
-    return Game.entites[id];
+    return this.entites[id];
   }
 }

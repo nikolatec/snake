@@ -7,14 +7,18 @@ import Events from '../Framework/Events';
 
 export default class Snake extends Entity {
 
-  tailMin = 5;
-  tailLength = 5;
-  trail: IPosition[] = [];
+  private tailMin = 5;
+  private tailLength = 5;
+  private trail: IPosition[] = [];
 
   constructor({id, color, x, y} : IEntity) {
 
     super({id, color, x, y});
     this.addLengthOnAppleCollision();
+  }
+
+  public getTrail() {
+    return this.trail;
   }
 
   public update() {
