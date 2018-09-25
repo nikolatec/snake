@@ -4,7 +4,6 @@ import Scene from './Scene';
 
 export default abstract class Entity implements IEntity {
 
-  private game = Game;
   id = '';
   color = 'white';
   x =  0;
