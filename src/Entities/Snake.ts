@@ -7,8 +7,8 @@ import Events from '../Framework/Events';
 
 export default class Snake extends Entity {
 
-  tail = 5;
   tailMin = 5;
+  tailLength = 5;
   trail: IPosition[] = [];
 
   constructor({id, color, x, y} : IEntity) {
@@ -55,7 +55,7 @@ export default class Snake extends Entity {
 
     for (var i = 0; i < this.trail.length; i++) {
       if (this.trail[i].x === this.x && this.trail[i].y === this.y) {
-        this.tail = this.tailMin;
+        this.tailLength = this.tailMin;
       }
     }
   }
@@ -63,7 +63,7 @@ export default class Snake extends Entity {
   private controlTailLength() {
 
     this.trail.push({x: this.x, y: this.y});
-    while (this.trail.length > this.tail) {
+    while (this.trail.length > this.tailLength) {
       this.trail.shift();
     }
   }
@@ -71,7 +71,7 @@ export default class Snake extends Entity {
   private addLengthOnAppleCollision() {
 
     Events.on('collision', () => {
-      this.tail++;
+      this.tailLength++;
     });
   }
 
