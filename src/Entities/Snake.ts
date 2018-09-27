@@ -1,10 +1,12 @@
 import IEntity from '../../../gamekit/src/Core/Interfaces/IEntity';
-import IPosition from '../../../gamekit/src/Core/Interfaces/IPosition';
+import IPoint from '../../../gamekit/src/Core/Interfaces/IPoint';
+import IVelocity from '../../../gamekit/src/Core/Interfaces/IVelocity';
 import Entity from '../../../gamekit/src/Core/Entity';
 import Scene from '../../../gamekit/src/Core/Scene';
 import config from '../Config';
-// import Events from '../../../gamekit/src/Core/Events';
 import Apple from './Apple';
+import AssetLoader from '../../../gamekit/src/Core/AssetLoader';
+import SnakeSprite from '../SnakeSprite';
 
 export default class Snake extends Entity {
 
@@ -12,12 +14,17 @@ export default class Snake extends Entity {
   private ai = false;
   private tailMin = 5;
   private tailLength = 5;
-  trail: IPosition[] = [];
+  trail: (IPoint & IVelocity)[] = [];
 
-  constructor({id, color, x, y, ai = false} : IEntity & {ai?: boolean}) {
+  constructor({id, color, x, y, xVelocity, yVelocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: (IPoint & IVelocity)[]}) {
 
-    super({id, color, x, y});
+    super({id, color, x, y, xVelocity, yVelocity});
+    if (trail[trail.length - 1]) {
+      this.x = trail[trail.length - 1].x;
+      this.y = trail[trail.length - 1].y;
+    }
     this.ai = ai;
+    this.trail = trail;
   }
 
   public update() {
@@ -34,8 +41,8 @@ export default class Snake extends Entity {
 
   private playAi() {
 
-    this.xVelocity = 0;
     this.yVelocity = 0;
+    this.xVelocity = 0;
 
     if (!this.target) {
 
@@ -47,20 +54,25 @@ export default class Snake extends Entity {
     if (this.x < this.target.x) {
       
       this.xVelocity = 1;
+      return;
     }
-    else if (this.x > this.target.x) {
-      
+
+    if (this.x > this.target.x) {
+
       this.xVelocity = -1
+      return;
     }
-    else {
-      if (this.y < this.target.y) {
-        
-        this.yVelocity = 1;
-      }
-      if (this.y > this.target.y) {
-        
-        this.yVelocity = -1;
-      }
+
+    if (this.y < this.target.y) {
+      
+      this.yVelocity = 1;
+      return;
+    }
+
+    if (this.y > this.target.y) {
+      
+      this.yVelocity = -1;
+      return;
     }
   }
 
@@ -88,12 +100,13 @@ export default class Snake extends Entity {
 
   private findClosestPoint(x1: number, y1: number, x2: number, y2: number) {
 
-      return Math.sqrt(Math.pow(x2 - x1, 2) +  Math.pow(y2 - y1, 2) * 1.0); 
+      return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) * 1.0); 
   }
 
   public draw(scene: Scene) {
 
-    this.makeItGlow(scene);
+    // this.makeItGlow(scene);
+    // this.drawSnakeDebug(scene);
     this.drawSnake(scene);
   }
 
@@ -105,9 +118,149 @@ export default class Snake extends Entity {
 
   private drawSnake(scene: Scene) {
 
-    for (var i = 0; i < this.trail.length; i++) {
+    this.drawSnakeHead(scene);
+    this.drawSnakeBody(scene);
+    this.drawSnakeTail(scene);
+  }
+
+  private drawSnakeTail(scene: Scene) {
+
+    if (this.trail[0].xVelocity === 1 && this.trail[1].xVelocity === 1) {
+      this.drawSnakeSprite(scene, SnakeSprite.tailRight, this.trail[0]);
+      return;
+    }
+
+    if (this.trail[0].xVelocity === -1 && this.trail[1].xVelocity === -1) {
+      this.drawSnakeSprite(scene, SnakeSprite.tailLeft, this.trail[0]);
+      return;
+    }
+
+    if (this.trail[0].yVelocity === 1 && this.trail[1].yVelocity === 1) {
+      this.drawSnakeSprite(scene, SnakeSprite.tailDown, this.trail[0]);
+      return;
+    }
+
+    if (this.trail[0].yVelocity === -1 && this.trail[1].yVelocity === -1) {
+      this.drawSnakeSprite(scene, SnakeSprite.tailUp, this.trail[0]);
+      return;
+    }
+  }
+
+  private drawSnakeBody(scene: Scene) {
+
+    for (let i = 1; i < this.trail.length; i++) {
+
+      if (this.trail[i-1].xVelocity === 1 && this.trail[i].xVelocity === 1 || this.trail[i-1].xVelocity === -1 && this.trail[i].xVelocity === -1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyHorizontal, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].yVelocity === 1 && this.trail[i].yVelocity === 1 || this.trail[i-1].yVelocity === -1 && this.trail[i].yVelocity === -1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyVertical, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].x < this.trail[i].x && this.trail[i].yVelocity === 1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleRightDown, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].y < this.trail[i].y && this.trail[i].xVelocity === -1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleDownLeft, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].x > this.trail[i].x && this.trail[i].yVelocity === -1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleLeftUp, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].y > this.trail[i].y && this.trail[i].xVelocity === 1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleUpRight, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].y < this.trail[i].y && this.trail[i].xVelocity === 1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleDownRight, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].x < this.trail[i].x && this.trail[i].yVelocity === -1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleRightUp, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].x > this.trail[i].x && this.trail[i].yVelocity === 1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleLeftDown, this.trail[i]);
+        continue;
+      }
+
+      if (this.trail[i-1].y > this.trail[i].y && this.trail[i].xVelocity === -1) {
+        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleUpLeft, this.trail[i]);
+        continue;
+      }
+    }
+  }
+
+  private drawSnakeHead(scene: Scene) {
+
+    if (this.xVelocity === 1) {
+      this.drawSnakeSprite(
+        scene,
+        SnakeSprite.headRight,
+        {x: this.x, y: this.y}
+      );
+      return;
+    }
+
+    if (this.xVelocity === -1) {
+      this.drawSnakeSprite(
+        scene,
+        SnakeSprite.headLeft,
+        {x: this.x, y: this.y}
+      );
+      return;
+    }
+
+    if (this.yVelocity === 1) {
+      this.drawSnakeSprite(
+        scene,
+        SnakeSprite.headDown,
+        {x: this.x, y: this.y}
+      );
+      return;
+    }
+
+    if (this.yVelocity === -1) {
+      this.drawSnakeSprite(
+        scene,
+        SnakeSprite.headUp,
+        {x: this.x, y: this.y}
+      );
+      return;
+    }
+  }
+
+  private drawSnakeSprite(scene: Scene, segment: IPoint, point: IPoint) {
+
+    scene.context.drawImage(
+      AssetLoader.loadedImages[0],
+      segment.x * SnakeSprite.segment,
+      segment.y * SnakeSprite.segment,
+      SnakeSprite.segment,
+      SnakeSprite.segment,
+      point.x * config.PIXEL,
+      point.y * config.PIXEL,
+      config.PIXEL,
+      config.PIXEL
+    );
+  }
+
+  private drawSnakeDebug(scene: Scene) {
+
+    for (let i = 0; i < this.trail.length; i++) {
       scene.context.fillStyle = this.color;
-      scene.context.fillRect(this.trail[i].x * config.PIXEL, this.trail[i].y * config.PIXEL, config.PIXEL - 2, config.PIXEL - 2);
+      scene.context.fillRect(this.trail[i].x * config.PIXEL, this.trail[i].y * config.PIXEL, config.PIXEL, config.PIXEL);
     }
   }
 
@@ -119,7 +272,7 @@ export default class Snake extends Entity {
 
   private cutTailOnSelfCollision() {
 
-    for (var i = 0; i < this.trail.length; i++) {
+    for (let i = 0; i < this.trail.length; i++) {
       if (this.trail[i].x === this.x && this.trail[i].y === this.y) {
         this.tailLength = this.tailMin;
       }
@@ -127,8 +280,13 @@ export default class Snake extends Entity {
   }
 
   private controlTailLength() {
-
-    this.trail.push({x: this.x, y: this.y});
+    
+    this.trail.push({
+      x: this.x,
+      y: this.y,
+      xVelocity: this.xVelocity,
+      yVelocity: this.yVelocity,
+    });
     while (this.trail.length > this.tailLength) {
       this.trail.shift();
     }
@@ -139,31 +297,35 @@ export default class Snake extends Entity {
     const apples: Apple[] = this.getEntitiesById('apple');
     for (let apple of apples) {
       if (this.trail.length) {
-        if (this.trail[0].x === apple.x && this.trail[0].y === apple.y) {
+        if (this.trail[this.trail.length - 1].x === apple.x && this.trail[this.trail.length - 1].y === apple.y) {
           apple.setNewRandomPosition();
           this.tailLength++;
+          return;
         }
       }
     }
-    // Events.on('collision', () => {
-    //   this.target = null;
-    //   this.tailLength++;
-    // });
   }
 
   private teleportOnWallCollision() {
 
     if (this.x < 0) {
       this.x = config.SCENE_PIXEL_TIMES_WIDTH - 1;
+      return;
     }
+
     if (this.x > config.SCENE_PIXEL_TIMES_WIDTH - 1) {
       this.x = 0;
+      return;
     }
+
     if (this.y < 0) {
       this.y = config.SCENE_PIXEL_TIMES_HEIGHT - 1;
+      return;
     }
+
     if (this.y > config.SCENE_PIXEL_TIMES_HEIGHT - 1) {
       this.y = 0;
+      return;
     }
   }
 }

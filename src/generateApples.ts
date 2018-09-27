@@ -1,7 +1,7 @@
 import Apple from './Entities/Apple';
 import config from './Config';
 
-export default function generateApples(num: number) {
+export default function GenerateApples(num: number) {
   
   for (let i = 0; i < num; i++) {
     new Apple({

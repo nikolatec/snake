@@ -1,8 +1,11 @@
 import Scene from '../../../gamekit/src/Core/Scene';
 import Entity from '../../../gamekit/src/Core/Entity';
 import IEntity from '../../../gamekit/src/Core/Interfaces/IEntity';
+import IPoint from '../../../gamekit/src/Core/Interfaces/IPoint';
 import config from '../Config';
 import Snake from './Snake';
+import AppleSprite from '../AppleSprite';
+import AssetLoader from '../../../gamekit/src/Core/AssetLoader';
 // import Events from '../../../gamekit/src/Core/Events';
 
 export default class Apple extends Entity {
@@ -32,10 +35,8 @@ export default class Apple extends Entity {
   private checkIsAppleEatenBySnakeAndTail() {
     const snakes: Snake[] = this.getEntitiesById('snake');
     for (let snake of snakes) {
-      for (var i = 0; i < snake.trail.length; i++) {
+      for (let i = 0; i < snake.trail.length; i++) {
         if (snake.trail[i].x === this.x && snake.trail[i].y === this.y) {
-          // Events.trigger('collision');
-          // console.log('collision');
           this.setNewRandomPosition();
         }
       }
@@ -44,8 +45,9 @@ export default class Apple extends Entity {
 
   public draw(scene: Scene) {
 
-    this.makeItGlow(scene);
-    this.drawApple(scene);
+    // this.makeItGlow(scene);
+    this.drawSnakeSprite(scene, AppleSprite.normal, {x: this.x, y: this.y});
+    // this.drawDebug(scene);
   }
 
   private makeItGlow(scene: Scene) {
@@ -54,10 +56,25 @@ export default class Apple extends Entity {
     scene.context.shadowColor = this.color;
   }
 
-  private drawApple(scene: Scene) {
+  private drawDebug(scene: Scene) {
 
     scene.context.fillStyle = this.color;
-    scene.context.fillRect(this.x * config.PIXEL, this.y * config.PIXEL, config.PIXEL - 2, config.PIXEL - 2);
+    scene.context.fillRect(this.x * config.PIXEL, this.y * config.PIXEL, config.PIXEL, config.PIXEL);
+  }
+
+  private drawSnakeSprite(scene: Scene, segment: IPoint, position: IPoint) {
+
+    scene.context.drawImage(
+      AssetLoader.loadedImages[0],
+      segment.x * AppleSprite.segment,
+      segment.y * AppleSprite.segment,
+      AppleSprite.segment,
+      AppleSprite.segment,
+      position.x * config.PIXEL,
+      position.y * config.PIXEL,
+      config.PIXEL,
+      config.PIXEL
+    );
   }
 
   public setNewRandomPosition() {

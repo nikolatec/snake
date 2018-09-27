@@ -1,7 +1,7 @@
 import Snake from './Entities/Snake';
 import config from './Config';
 
-export default function generateSnakes(num: number, ai = false) {
+export default function GenerateSnakes(num: number, ai = false) {
   for (let i = 0; i < num; i++) {
     new Snake({
       id: 'snake',
