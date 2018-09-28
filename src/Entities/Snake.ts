@@ -1,11 +1,16 @@
-import IEntity from '../../../gamekit/src/Core/Interfaces/IEntity';
-import IPoint from '../../../gamekit/src/Core/Interfaces/IPoint';
-import IVelocity from '../../../gamekit/src/Core/Interfaces/IVelocity';
-import Entity from '../../../gamekit/src/Core/Entity';
-import Scene from '../../../gamekit/src/Core/Scene';
+import {
+  IEntity,
+  IPoint,
+  IVelocity,
+  IScene
+} from '../../../gamekit/src/Core/Interfaces';
 import config from '../Config';
 import Apple from './Apple';
-import AssetLoader from '../../../gamekit/src/Core/AssetLoader';
+import {
+  Entity,
+  Scene,
+  AssetLoader
+} from '../../../gamekit/src';
 import SnakeSprite from '../SnakeSprite';
 
 export default class Snake extends Entity {
@@ -103,7 +108,7 @@ export default class Snake extends Entity {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) * 1.0); 
   }
 
-  public draw(scene: Scene) {
+  public draw(scene: IScene) {
 
     // this.makeItGlow(scene);
     // this.drawSnakeDebug(scene);
@@ -116,14 +121,14 @@ export default class Snake extends Entity {
     scene.context.shadowColor = this.color;
   }
 
-  private drawSnake(scene: Scene) {
+  private drawSnake(scene: IScene) {
 
     this.drawSnakeHead(scene);
     this.drawSnakeBody(scene);
     this.drawSnakeTail(scene);
   }
 
-  private drawSnakeTail(scene: Scene) {
+  private drawSnakeTail(scene: IScene) {
 
     if (this.trail[0].xVelocity === 1 && this.trail[1].xVelocity === 1) {
       this.drawSnakeSprite(scene, SnakeSprite.tailRight, this.trail[0]);
@@ -146,7 +151,7 @@ export default class Snake extends Entity {
     }
   }
 
-  private drawSnakeBody(scene: Scene) {
+  private drawSnakeBody(scene: IScene) {
 
     for (let i = 1; i < this.trail.length; i++) {
 
@@ -202,7 +207,7 @@ export default class Snake extends Entity {
     }
   }
 
-  private drawSnakeHead(scene: Scene) {
+  private drawSnakeHead(scene: IScene) {
 
     if (this.xVelocity === 1) {
       this.drawSnakeSprite(
@@ -241,26 +246,31 @@ export default class Snake extends Entity {
     }
   }
 
-  private drawSnakeSprite(scene: Scene, segment: IPoint, point: IPoint) {
+  private drawSnakeSprite(scene: IScene, segment: IPoint, point: IPoint) {
 
-    scene.context.drawImage(
-      AssetLoader.loadedImages[0],
-      segment.x * SnakeSprite.segment,
-      segment.y * SnakeSprite.segment,
-      SnakeSprite.segment,
-      SnakeSprite.segment,
-      point.x * config.PIXEL,
-      point.y * config.PIXEL,
-      config.PIXEL,
-      config.PIXEL
-    );
+    scene.sprite({
+      image: AssetLoader.loadedImages[0],
+      sx: segment.x * SnakeSprite.segment,
+      sy: segment.y * SnakeSprite.segment,
+      sWidth: SnakeSprite.segment,
+      sHeight: SnakeSprite.segment,
+      dx: point.x * config.PIXEL,
+      dy: point.y * config.PIXEL,
+      dWidth: config.PIXEL,
+      dHeight: config.PIXEL
+    });
   }
 
   private drawSnakeDebug(scene: Scene) {
 
     for (let i = 0; i < this.trail.length; i++) {
-      scene.context.fillStyle = this.color;
-      scene.context.fillRect(this.trail[i].x * config.PIXEL, this.trail[i].y * config.PIXEL, config.PIXEL, config.PIXEL);
+      scene.rect({
+        color: this.color,
+        x: this.trail[i].x * config.PIXEL,
+        y: this.trail[i].y * config.PIXEL,
+        width: config.PIXEL,
+        height: config.PIXEL
+      });
     }
   }
 
