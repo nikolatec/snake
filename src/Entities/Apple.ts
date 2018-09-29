@@ -23,7 +23,7 @@ export default class Apple extends Entity {
   public draw(scene: IScene) {
 
     // this.drawDebug(scene);
-    this.drawSnakeSprite(scene, AppleSprite.normal, this.point);
+    this.drawAppleSprite(scene, AppleSprite.normal, this.point);
   }
 
   private drawDebug(scene: IScene) {
@@ -31,7 +31,7 @@ export default class Apple extends Entity {
     scene.rect({color: this.node.color, x: this.point.x * config.PIXEL, y: this.point.y * config.PIXEL, width: config.PIXEL, height: config.PIXEL});
   }
 
-  private drawSnakeSprite(scene: IScene, segment: IPoint, position: IPoint) {
+  private drawAppleSprite(scene: IScene, segment: IPoint, position: IPoint) {
 
     scene.sprite({
       image: AssetLoader.loadedImages[0],

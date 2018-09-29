@@ -14,7 +14,7 @@ export default function drawSnakeHead(scene: IScene) {
     this.drawSnakeSprite(
       scene,
       SnakeSprite.headRight,
-      this.point,
+      {point: this.point},
     );
     return;
   }
@@ -23,7 +23,7 @@ export default function drawSnakeHead(scene: IScene) {
     this.drawSnakeSprite(
       scene,
       SnakeSprite.headLeft,
-      this.point,
+      {point: this.point},
     );
     return;
   }
@@ -32,7 +32,7 @@ export default function drawSnakeHead(scene: IScene) {
     this.drawSnakeSprite(
       scene,
       SnakeSprite.headDown,
-      this.point,
+      {point: this.point},
     );
     return;
   }
@@ -41,7 +41,7 @@ export default function drawSnakeHead(scene: IScene) {
     this.drawSnakeSprite(
       scene,
       SnakeSprite.headUp,
-      this.point,
+      {point: this.point},
     );
     return;
   }

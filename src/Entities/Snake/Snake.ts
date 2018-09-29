@@ -1,6 +1,7 @@
 import {
   IEntity,
   IPoint,
+  IVelocity,
   IScene
 } from '../../../../gamekit/src/Core/Interfaces';
 import config from '../../Config';
@@ -22,14 +23,14 @@ export default class Snake extends Entity {
   private ai = false;
   private tailMin = 5;
   private tailLength = 5;
-  private trail: any[] = [];
+  private trail: ({x?: number; y?:number; point: IPoint; velocity: IVelocity})[] = [];
 
-  constructor({node, point, velocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: any[]}) {
+  constructor({node, point, velocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: ({point: IPoint; velocity: IVelocity})[]}) {
 
     super({node, point, velocity});
     if (trail[trail.length - 1]) {
-      this.point.x = trail[trail.length - 1].x;
-      this.point.y = trail[trail.length - 1].y;
+      this.point.x = trail[trail.length - 1].point.x;
+      this.point.y = trail[trail.length - 1].point.y;
     }
     this.ai = ai;
     this.trail = trail;
@@ -45,12 +46,8 @@ export default class Snake extends Entity {
       this.playAi();
     }
     this.trail.push({
-      // point: new Point(this.velocity.x, this.velocity.y),
-      // velocity: new Velocity(this.velocity.x, this.velocity.y),
-      x: this.point.x,
-      y: this.point.y,
-      xVelocity: this.velocity.x || 0,
-      yVelocity: this.velocity.y || 0,
+      point: new Point(this.point.x, this.point.y),
+      velocity: new Velocity(this.velocity.x, this.velocity.y),
     });
     this.movePlayer();
   }
@@ -138,7 +135,7 @@ export default class Snake extends Entity {
 
   private drawSnakeTail = drawSnakeTail;
 
-  private drawSnakeSprite(scene: IScene, segment: IPoint, point: IPoint) {
+  private drawSnakeSprite(scene: IScene, segment: IPoint, trail: ({point: IPoint; velocity: IVelocity})) {
 
     scene.sprite({
       image: AssetLoader.loadedImages[0],
@@ -146,8 +143,8 @@ export default class Snake extends Entity {
       sy: segment.y * SnakeSprite.segment,
       sWidth: SnakeSprite.segment,
       sHeight: SnakeSprite.segment,
-      dx: point.x * config.PIXEL,
-      dy: point.y * config.PIXEL,
+      dx: trail.point.x * config.PIXEL,
+      dy: trail.point.y * config.PIXEL,
       dWidth: config.PIXEL,
       dHeight: config.PIXEL
     });
@@ -158,8 +155,8 @@ export default class Snake extends Entity {
     for (let i = 0; i < this.trail.length; i++) {
       scene.rect({
         color: this.node.color,
-        x: this.trail[i].x * config.PIXEL,
-        y: this.trail[i].y * config.PIXEL,
+        x: this.trail[i].point.x * config.PIXEL,
+        y: this.trail[i].point.y * config.PIXEL,
         width: config.PIXEL,
         height: config.PIXEL
       });
@@ -175,7 +172,7 @@ export default class Snake extends Entity {
   private cutTailOnSelfCollision() {
 
     for (let i = 0; i < this.trail.length; i++) {
-      if (this.trail[i].x === this.point.x && this.trail[i].y === this.point.y) {
+      if (this.trail[i].point.x === this.point.x && this.trail[i].point.y === this.point.y) {
         this.tailLength = this.tailMin;
       }
     }
@@ -193,12 +190,10 @@ export default class Snake extends Entity {
 
     const apples: Apple[] = this.getEntitiesById('apple');
     for (let apple of apples) {
-      if (this.trail.length) {
-        if (this.point.x === apple.point.x && this.point.y === apple.point.y) {
-          apple.setNewRandomPosition();
-          this.tailLength++;
-          return;
-        }
+      if (this.point.x === apple.point.x && this.point.y === apple.point.y) {
+        apple.setNewRandomPosition();
+        this.tailLength++;
+        return;
       }
     }
   }
