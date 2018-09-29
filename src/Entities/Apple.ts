@@ -8,7 +8,7 @@ import {
   AssetLoader
 } from '../../../gamekit/src';
 import config from '../Config';
-import Snake from './Snake';
+import Snake from './Snake/Snake';
 import AppleSprite from '../AppleSprite';
 
 export default class Apple extends Entity {
@@ -18,40 +18,12 @@ export default class Apple extends Entity {
     super({node, point});
   }
 
-  public update() {
-
-    // for now it is handled in snake
-    // this.checkIsAppleEatenByHead();
-  }
-
-  private checkIsAppleEatenByHead() {
-
-    const snakes: Snake[] = this.getEntitiesById('snake');
-    for (let snake of snakes) {
-      if (snake.trail.length) {
-        if (snake.trail[0].point.x === this.point.x && snake.trail[0].point.y === this.point.y) {
-          this.setNewRandomPosition();
-        }
-      }
-    }
-  }
-
-  private checkIsAppleEatenBySnakeAndTail() {
-    
-    const snakes: Snake[] = this.getEntitiesById('snake');
-    for (let snake of snakes) {
-      for (let i = 0; i < snake.trail.length; i++) {
-        if (snake.trail[i].point.x === this.point.x && snake.trail[i].point.y === this.point.y) {
-          this.setNewRandomPosition();
-        }
-      }
-    }
-  }
+  public update() {}
 
   public draw(scene: IScene) {
 
-    this.drawSnakeSprite(scene, AppleSprite.normal, this.point);
     // this.drawDebug(scene);
+    this.drawSnakeSprite(scene, AppleSprite.normal, this.point);
   }
 
   private drawDebug(scene: IScene) {

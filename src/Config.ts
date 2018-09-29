@@ -1,11 +1,11 @@
 const W = innerWidth;
 const H = innerHeight;
-const PIXEL = 15;
+const PIXEL = 5;
 const SCENE_PIXEL_TIMES_WIDTH = Math.floor(W / PIXEL);
 const SCENE_PIXEL_TIMES_HEIGHT = Math.floor(H / PIXEL);
-const SNAKES = 10;
-const APPLES = 500;
-const FPS = 30;
+const SNAKES = 100;
+const APPLES = 3000;
+const FPS = 60;
 
 export default {
   FPS,

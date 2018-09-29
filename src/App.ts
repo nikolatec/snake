@@ -1,4 +1,4 @@
-import Snake from './Entities/Snake';
+import Snake from './Entities/Snake/Snake';
 import {
   Node,
   Point,

@@ -7,10 +7,12 @@ import config from './Config';
 
 export default function GenerateApples(num: number) {
   
+  let apples: Apple[] = [];
   for (let i = 0; i < num; i++) {
     new Apple({
       node: new Node('apple', 'red'),
       point: new Point(Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_WIDTH), Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_HEIGHT)),
     });
   }
+  return apples;
 }

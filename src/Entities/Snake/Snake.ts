@@ -1,17 +1,20 @@
 import {
   IEntity,
   IPoint,
-  IVelocity,
   IScene
-} from '../../../gamekit/src/Core/Interfaces';
-import config from '../Config';
-import Apple from './Apple';
+} from '../../../../gamekit/src/Core/Interfaces';
+import config from '../../Config';
+import Apple from '../Apple';
 import {
+  Point,
+  Velocity,
   Entity,
-  Scene,
   AssetLoader
-} from '../../../gamekit/src';
-import SnakeSprite from '../SnakeSprite';
+} from '../../../../gamekit/src';
+import SnakeSprite from '../../SnakeSprite';
+import drawSnakeHead from './drawSnakeHead';
+import drawSnakeBody from './drawSnakeBody';
+import drawSnakeTail from './drawSnakeTail';
 
 export default class Snake extends Entity {
 
@@ -19,7 +22,7 @@ export default class Snake extends Entity {
   private ai = false;
   private tailMin = 5;
   private tailLength = 5;
-  trail: any[] = [];
+  private trail: any[] = [];
 
   constructor({node, point, velocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: any[]}) {
 
@@ -34,20 +37,28 @@ export default class Snake extends Entity {
 
   public update() {
 
-    this.addLengthOnAppleCollision();
+    this.handleAppleCollision();
     this.cutTailOnSelfCollision();
     this.controlTailLength();
     this.teleportOnWallCollision();
     if (this.ai) {
       this.playAi();
     }
+    this.trail.push({
+      // point: new Point(this.velocity.x, this.velocity.y),
+      // velocity: new Velocity(this.velocity.x, this.velocity.y),
+      x: this.point.x,
+      y: this.point.y,
+      xVelocity: this.velocity.x || 0,
+      yVelocity: this.velocity.y || 0,
+    });
     this.movePlayer();
   }
 
   private playAi() {
 
-    this.velocity.y = 0;
     this.velocity.x = 0;
+    this.velocity.y = 0;
 
     if (!this.target) {
 
@@ -121,123 +132,11 @@ export default class Snake extends Entity {
     this.drawSnakeTail(scene);
   }
 
-  private drawSnakeTail(scene: IScene) {
+  private drawSnakeHead = drawSnakeHead;
 
-    if (this.trail[0].xVelocity === 1 && this.trail[1].xVelocity === 1) {
-      this.drawSnakeSprite(scene, SnakeSprite.tailRight, this.trail[0]);
-      return;
-    }
+  private drawSnakeBody = drawSnakeBody;
 
-    if (this.trail[0].xVelocity === -1 && this.trail[1].xVelocity === -1) {
-      this.drawSnakeSprite(scene, SnakeSprite.tailLeft, this.trail[0]);
-      return;
-    }
-
-    if (this.trail[0].yVelocity === 1 && this.trail[1].yVelocity === 1) {
-      this.drawSnakeSprite(scene, SnakeSprite.tailDown, this.trail[0]);
-      return;
-    }
-
-    if (this.trail[0].yVelocity === -1 && this.trail[1].yVelocity === -1) {
-      this.drawSnakeSprite(scene, SnakeSprite.tailUp, this.trail[0]);
-      return;
-    }
-  }
-
-  private drawSnakeBody(scene: IScene) {
-
-    for (let i = 1; i < this.trail.length; i++) {
-
-      if (this.trail[i-1].xVelocity === 1 && this.trail[i].xVelocity === 1 || this.trail[i-1].xVelocity === -1 && this.trail[i].xVelocity === -1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyHorizontal, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].yVelocity === 1 && this.trail[i].yVelocity === 1 || this.trail[i-1].yVelocity === -1 && this.trail[i].yVelocity === -1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyVertical, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].x < this.trail[i].x && this.trail[i].yVelocity === 1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleRightDown, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].y < this.trail[i].y && this.trail[i].xVelocity === -1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleDownLeft, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].x > this.trail[i].x && this.trail[i].yVelocity === -1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleLeftUp, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].y > this.trail[i].y && this.trail[i].xVelocity === 1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleUpRight, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].y < this.trail[i].y && this.trail[i].xVelocity === 1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleDownRight, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].x < this.trail[i].x && this.trail[i].yVelocity === -1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleRightUp, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].x > this.trail[i].x && this.trail[i].yVelocity === 1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleLeftDown, this.trail[i]);
-        continue;
-      }
-
-      if (this.trail[i-1].y > this.trail[i].y && this.trail[i].xVelocity === -1) {
-        this.drawSnakeSprite(scene, SnakeSprite.bodyAngleUpLeft, this.trail[i]);
-        continue;
-      }
-    }
-  }
-
-  private drawSnakeHead(scene: IScene) {
-
-    if (this.velocity.x === 1) {
-      this.drawSnakeSprite(
-        scene,
-        SnakeSprite.headRight,
-        this.point,
-      );
-      return;
-    }
-
-    if (this.velocity.x === -1) {
-      this.drawSnakeSprite(
-        scene,
-        SnakeSprite.headLeft,
-        this.point,
-      );
-      return;
-    }
-
-    if (this.velocity.y === 1) {
-      this.drawSnakeSprite(
-        scene,
-        SnakeSprite.headDown,
-        this.point,
-      );
-      return;
-    }
-
-    if (this.velocity.y === -1) {
-      this.drawSnakeSprite(
-        scene,
-        SnakeSprite.headUp,
-        this.point,
-      );
-      return;
-    }
-  }
+  private drawSnakeTail = drawSnakeTail;
 
   private drawSnakeSprite(scene: IScene, segment: IPoint, point: IPoint) {
 
@@ -254,7 +153,7 @@ export default class Snake extends Entity {
     });
   }
 
-  private drawSnakeDebug(scene: Scene) {
+  private drawSnakeDebug(scene: IScene) {
 
     for (let i = 0; i < this.trail.length; i++) {
       scene.rect({
@@ -284,23 +183,18 @@ export default class Snake extends Entity {
 
   private controlTailLength() {
     
-    this.trail.push({
-      x: this.point.x,
-      y: this.point.y,
-      xVelocity: this.velocity.x,
-      yVelocity: this.velocity.y,
-    });
+
     while (this.trail.length > this.tailLength) {
       this.trail.shift();
     }
   }
 
-  private addLengthOnAppleCollision() {
+  private handleAppleCollision() {
 
     const apples: Apple[] = this.getEntitiesById('apple');
     for (let apple of apples) {
       if (this.trail.length) {
-        if (this.trail[this.trail.length - 1].x === apple.point.x && this.trail[this.trail.length - 1].y === apple.point.y) {
+        if (this.point.x === apple.point.x && this.point.y === apple.point.y) {
           apple.setNewRandomPosition();
           this.tailLength++;
           return;
