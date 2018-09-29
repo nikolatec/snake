@@ -1,5 +1,7 @@
 import Snake from './Entities/Snake';
 import {
+  Node,
+  Point,
   Game,
   Key,
   AssetLoader
@@ -24,33 +26,31 @@ const game = Game.createGame({
 });
 
 const playerSnake = new Snake({
-  id: 'snake',
-  color: 'lime',
-  x: 10,
-  y: 10
+  node: new Node('snake', 'lime'),
+  point: new Point(10, 10)
 });
 
 function handleKeyboard(event: any) {
 
-  playerSnake.xVelocity = 0;
-  playerSnake.yVelocity = 0;
+  playerSnake.velocity.x = 0;
+  playerSnake.velocity.y = 0;
 
   switch (event.keyCode) {
 
     case Key.LEFT:
-      playerSnake.xVelocity = -1;
+      playerSnake.velocity.x = -1;
       break;
 
     case Key.UP:
-      playerSnake.yVelocity = -1;
+      playerSnake.velocity.y = -1;
       break;
 
     case Key.RIGHT:
-      playerSnake.xVelocity = 1;
+      playerSnake.velocity.x = 1;
       break;
 
     case Key.DOWN:
-      playerSnake.yVelocity = 1;
+      playerSnake.velocity.y = 1;
       break;
   }
 }

@@ -13,9 +13,9 @@ import AppleSprite from '../AppleSprite';
 
 export default class Apple extends Entity {
 
-  constructor({id, color, x, y} : IEntity) {
+  constructor({node, point} : IEntity) {
 
-    super({id, color, x, y});
+    super({node, point});
   }
 
   public update() {
@@ -29,7 +29,7 @@ export default class Apple extends Entity {
     const snakes: Snake[] = this.getEntitiesById('snake');
     for (let snake of snakes) {
       if (snake.trail.length) {
-        if (snake.trail[0].x === this.x && snake.trail[0].y === this.y) {
+        if (snake.trail[0].point.x === this.point.x && snake.trail[0].point.y === this.point.y) {
           this.setNewRandomPosition();
         }
       }
@@ -41,7 +41,7 @@ export default class Apple extends Entity {
     const snakes: Snake[] = this.getEntitiesById('snake');
     for (let snake of snakes) {
       for (let i = 0; i < snake.trail.length; i++) {
-        if (snake.trail[i].x === this.x && snake.trail[i].y === this.y) {
+        if (snake.trail[i].point.x === this.point.x && snake.trail[i].point.y === this.point.y) {
           this.setNewRandomPosition();
         }
       }
@@ -50,20 +50,13 @@ export default class Apple extends Entity {
 
   public draw(scene: IScene) {
 
-    // this.makeItGlow(scene);
-    this.drawSnakeSprite(scene, AppleSprite.normal, {x: this.x, y: this.y});
+    this.drawSnakeSprite(scene, AppleSprite.normal, this.point);
     // this.drawDebug(scene);
-  }
-
-  private makeItGlow(scene: IScene) {
-    
-    scene.context.shadowBlur = 20;
-    scene.context.shadowColor = this.color;
   }
 
   private drawDebug(scene: IScene) {
 
-    scene.rect({color: this.color, x: this.x * config.PIXEL, y: this.y * config.PIXEL, width: config.PIXEL, height: config.PIXEL});
+    scene.rect({color: this.node.color, x: this.point.x * config.PIXEL, y: this.point.y * config.PIXEL, width: config.PIXEL, height: config.PIXEL});
   }
 
   private drawSnakeSprite(scene: IScene, segment: IPoint, position: IPoint) {
@@ -83,7 +76,7 @@ export default class Apple extends Entity {
 
   public setNewRandomPosition() {
 
-    this.x = Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_WIDTH);
-    this.y = Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_HEIGHT);
+    this.point.x = Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_WIDTH);
+    this.point.y = Math.floor(Math.random() * config.SCENE_PIXEL_TIMES_HEIGHT);
   }
 }

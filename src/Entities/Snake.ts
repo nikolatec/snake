@@ -19,14 +19,14 @@ export default class Snake extends Entity {
   private ai = false;
   private tailMin = 5;
   private tailLength = 5;
-  trail: (IPoint & IVelocity)[] = [];
+  trail: any[] = [];
 
-  constructor({id, color, x, y, xVelocity, yVelocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: (IPoint & IVelocity)[]}) {
+  constructor({node, point, velocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: any[]}) {
 
-    super({id, color, x, y, xVelocity, yVelocity});
+    super({node, point, velocity});
     if (trail[trail.length - 1]) {
-      this.x = trail[trail.length - 1].x;
-      this.y = trail[trail.length - 1].y;
+      this.point.x = trail[trail.length - 1].x;
+      this.point.y = trail[trail.length - 1].y;
     }
     this.ai = ai;
     this.trail = trail;
@@ -46,8 +46,8 @@ export default class Snake extends Entity {
 
   private playAi() {
 
-    this.yVelocity = 0;
-    this.xVelocity = 0;
+    this.velocity.y = 0;
+    this.velocity.x = 0;
 
     if (!this.target) {
 
@@ -56,27 +56,27 @@ export default class Snake extends Entity {
         : this.target = this.findClosesAppleToEat();
     }
 
-    if (this.x < this.target.x) {
+    if (this.point.x < this.target.point.x) {
       
-      this.xVelocity = 1;
+      this.velocity.x = 1;
       return;
     }
 
-    if (this.x > this.target.x) {
+    if (this.point.x > this.target.point.x) {
 
-      this.xVelocity = -1
+      this.velocity.x = -1
       return;
     }
 
-    if (this.y < this.target.y) {
+    if (this.point.y < this.target.point.y) {
       
-      this.yVelocity = 1;
+      this.velocity.y = 1;
       return;
     }
 
-    if (this.y > this.target.y) {
+    if (this.point.y > this.target.point.y) {
       
-      this.yVelocity = -1;
+      this.velocity.y = -1;
       return;
     }
   }
@@ -94,7 +94,7 @@ export default class Snake extends Entity {
     let savedDistance = 1000;
     const apples =  this.getEntitiesById('apple');
     for (let i = 0; i < apples.length; i++) {
-      const currentDistance = this.findClosestPoint(this.x, this.y, apples[i].x, apples[i].y);
+      const currentDistance = this.findClosestPoint(this.point.x, this.point.y, apples[i].point.x, apples[i].point.y);
       if (currentDistance < savedDistance) {
         savedDistance = currentDistance;
         apple = apples[i];
@@ -110,15 +110,8 @@ export default class Snake extends Entity {
 
   public draw(scene: IScene) {
 
-    // this.makeItGlow(scene);
     // this.drawSnakeDebug(scene);
     this.drawSnake(scene);
-  }
-
-  private makeItGlow(scene: Scene) {
-
-    scene.context.shadowBlur = 20;
-    scene.context.shadowColor = this.color;
   }
 
   private drawSnake(scene: IScene) {
@@ -209,38 +202,38 @@ export default class Snake extends Entity {
 
   private drawSnakeHead(scene: IScene) {
 
-    if (this.xVelocity === 1) {
+    if (this.velocity.x === 1) {
       this.drawSnakeSprite(
         scene,
         SnakeSprite.headRight,
-        {x: this.x, y: this.y}
+        this.point,
       );
       return;
     }
 
-    if (this.xVelocity === -1) {
+    if (this.velocity.x === -1) {
       this.drawSnakeSprite(
         scene,
         SnakeSprite.headLeft,
-        {x: this.x, y: this.y}
+        this.point,
       );
       return;
     }
 
-    if (this.yVelocity === 1) {
+    if (this.velocity.y === 1) {
       this.drawSnakeSprite(
         scene,
         SnakeSprite.headDown,
-        {x: this.x, y: this.y}
+        this.point,
       );
       return;
     }
 
-    if (this.yVelocity === -1) {
+    if (this.velocity.y === -1) {
       this.drawSnakeSprite(
         scene,
         SnakeSprite.headUp,
-        {x: this.x, y: this.y}
+        this.point,
       );
       return;
     }
@@ -265,7 +258,7 @@ export default class Snake extends Entity {
 
     for (let i = 0; i < this.trail.length; i++) {
       scene.rect({
-        color: this.color,
+        color: this.node.color,
         x: this.trail[i].x * config.PIXEL,
         y: this.trail[i].y * config.PIXEL,
         width: config.PIXEL,
@@ -276,14 +269,14 @@ export default class Snake extends Entity {
 
   private movePlayer() {
 
-    this.x += this.xVelocity;
-    this.y += this.yVelocity;
+    this.point.x += this.velocity.x;
+    this.point.y += this.velocity.y;
   }
 
   private cutTailOnSelfCollision() {
 
     for (let i = 0; i < this.trail.length; i++) {
-      if (this.trail[i].x === this.x && this.trail[i].y === this.y) {
+      if (this.trail[i].x === this.point.x && this.trail[i].y === this.point.y) {
         this.tailLength = this.tailMin;
       }
     }
@@ -292,10 +285,10 @@ export default class Snake extends Entity {
   private controlTailLength() {
     
     this.trail.push({
-      x: this.x,
-      y: this.y,
-      xVelocity: this.xVelocity,
-      yVelocity: this.yVelocity,
+      x: this.point.x,
+      y: this.point.y,
+      xVelocity: this.velocity.x,
+      yVelocity: this.velocity.y,
     });
     while (this.trail.length > this.tailLength) {
       this.trail.shift();
@@ -307,7 +300,7 @@ export default class Snake extends Entity {
     const apples: Apple[] = this.getEntitiesById('apple');
     for (let apple of apples) {
       if (this.trail.length) {
-        if (this.trail[this.trail.length - 1].x === apple.x && this.trail[this.trail.length - 1].y === apple.y) {
+        if (this.trail[this.trail.length - 1].x === apple.point.x && this.trail[this.trail.length - 1].y === apple.point.y) {
           apple.setNewRandomPosition();
           this.tailLength++;
           return;
@@ -318,23 +311,23 @@ export default class Snake extends Entity {
 
   private teleportOnWallCollision() {
 
-    if (this.x < 0) {
-      this.x = config.SCENE_PIXEL_TIMES_WIDTH - 1;
+    if (this.point.x < 0) {
+      this.point.x = config.SCENE_PIXEL_TIMES_WIDTH - 1;
       return;
     }
 
-    if (this.x > config.SCENE_PIXEL_TIMES_WIDTH - 1) {
-      this.x = 0;
+    if (this.point.x > config.SCENE_PIXEL_TIMES_WIDTH - 1) {
+      this.point.x = 0;
       return;
     }
 
-    if (this.y < 0) {
-      this.y = config.SCENE_PIXEL_TIMES_HEIGHT - 1;
+    if (this.point.y < 0) {
+      this.point.y = config.SCENE_PIXEL_TIMES_HEIGHT - 1;
       return;
     }
 
-    if (this.y > config.SCENE_PIXEL_TIMES_HEIGHT - 1) {
-      this.y = 0;
+    if (this.point.y > config.SCENE_PIXEL_TIMES_HEIGHT - 1) {
+      this.point.y = 0;
       return;
     }
   }
