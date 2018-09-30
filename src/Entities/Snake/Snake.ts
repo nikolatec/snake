@@ -85,7 +85,6 @@ export default class Snake extends Entity {
     if (this.point.y > this.target.point.y) {
       
       this.velocity.y = -1;
-      return;
     }
   }
 

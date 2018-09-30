@@ -43,6 +43,5 @@ export default function drawSnakeHead(scene: IScene) {
       SnakeSprite.headUp,
       {point: this.point},
     );
-    return;
   }
 }

@@ -59,7 +59,6 @@ export default function(scene: IScene) {
 
     if (this.trail[i-1].point.y > this.trail[i].point.y && this.trail[i].velocity.x === -1) {
       this.drawSnakeSprite(scene, SnakeSprite.bodyAngleUpLeft, this.trail[i]);
-      continue;
     }
   }
 }

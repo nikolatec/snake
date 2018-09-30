@@ -31,6 +31,5 @@ export default function drawSnakeTail(scene: IScene) {
 
   if (this.trail[0].velocity.y === -1 && this.trail[1].velocity.y === -1) {
     this.drawSnakeSprite(scene, SnakeSprite.tailUp, this.trail[0]);
-    return;
   }
 }
