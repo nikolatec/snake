@@ -7,7 +7,7 @@ import config from './Config';
 
 export default function GenerateSnakes(num: number, ai = false) {
   
-  let snakes: Snake[] = [];
+  const snakes: Snake[] = [];
   for (let i = 0; i < num; i++) {
     snakes[i] = new Snake({
       node: new Node('snake', 'lime'),
