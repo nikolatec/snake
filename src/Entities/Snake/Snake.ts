@@ -23,7 +23,7 @@ export default class Snake extends Entity {
   private ai = false;
   private tailMin = 5;
   private tailLength = 5;
-  private trail: ({x?: number; y?:number; point: IPoint; velocity: IVelocity})[] = [];
+  private trail: ({point: IPoint; velocity: IVelocity})[] = [];
 
   constructor({node, point, velocity, ai = false, trail = []} : IEntity & {ai?: boolean, trail?: ({point: IPoint; velocity: IVelocity})[]}) {
 
